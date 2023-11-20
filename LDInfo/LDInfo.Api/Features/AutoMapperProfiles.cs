@@ -16,6 +16,7 @@ namespace LDInfo.Api.Features
             CreateMap<ProjectDto, Project>().ReverseMap();
             CreateMap<TimeLogDto, TimeLog>().ReverseMap();
             CreateMap<TimeLog, TimeLogDto>().ReverseMap();
+            CreateMap<TimeLog, TimeLogDetails>().ReverseMap();
         }
     }
 }

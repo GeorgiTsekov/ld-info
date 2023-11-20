@@ -2,12 +2,11 @@
 
 namespace LDInfo.Api.Features.TimeLogs.Models
 {
-    public class TimeLogDto
+    public class TimeLogDetails
     {
         [Column(TypeName = "float(18,2)")]
         public float Hours { get; set; }
         public DateTime Date { get; set; }
-        public Guid UserId { get; set; }
-        public int ProjectId { get; set; }
+        public string ProjectName { get; set; } = string.Empty;
     }
 }

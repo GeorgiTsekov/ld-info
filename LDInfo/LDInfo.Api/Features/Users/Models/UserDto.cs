@@ -14,6 +14,6 @@ namespace LDInfo.Api.Features.Users.Models
         [Required]
         public string LastName { get; set; } = string.Empty;
 
-        public virtual ICollection<TimeLogDto> TimeLogs { get; set; } = new List<TimeLogDto>();
+        public virtual ICollection<TimeLogDetails> TimeLogs { get; set; } = new List<TimeLogDetails>();
     }
 }
