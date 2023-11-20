@@ -1,3 +1,7 @@
+using LDInfo.Api.Features;
+using LDInfo.Api.Features.Projects;
+using LDInfo.Api.Features.TimeLogs;
+using LDInfo.Api.Features.Users;
 using LDInfo.API.Utils;
 using LDInfo.Data;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +17,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<LDInfoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString(StaticConstants.CONNECTION_STRING)));
+
+builder.Services
+    .AddScoped<IUserService, UserService>()
+    .AddScoped<ITimeLogService, TimeLogService>()
+    .AddScoped<IProjectService, ProjectService>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 
