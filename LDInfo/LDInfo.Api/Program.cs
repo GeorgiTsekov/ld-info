@@ -1,5 +1,6 @@
 using LDInfo.Api.Features;
 using LDInfo.Api.Features.Projects;
+using LDInfo.Api.Features.Seeder;
 using LDInfo.Api.Features.TimeLogs;
 using LDInfo.Api.Features.Users;
 using LDInfo.API.Utils;
@@ -21,7 +22,8 @@ builder.Services.AddDbContext<LDInfoDbContext>(options =>
 builder.Services
     .AddScoped<IUserService, UserService>()
     .AddScoped<ITimeLogService, TimeLogService>()
-    .AddScoped<IProjectService, ProjectService>();
+    .AddScoped<IProjectService, ProjectService>()
+    .AddScoped<ISeederService, SeederService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
