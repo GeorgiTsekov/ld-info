@@ -6,7 +6,13 @@ namespace LDInfo.Api.Features.Users
     {
         Task<User> ByIdAsync(Guid Id);
         Task<User> ByEmailAsync(string email);
-        Task<ICollection<User>> AllAsync();
+        Task<ICollection<User>> AllAsync(
+            DateTime? fromDate = null,
+            DateTime? toDate = null, 
+            string? sortBy = null, 
+            bool isAscending = true,
+            int pageNumber = 1,
+            int pageSize = 1000);
         Task CreateAsync(User model);
         Task DeleteAll();
     }

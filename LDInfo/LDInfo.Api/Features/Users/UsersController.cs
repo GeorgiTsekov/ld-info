@@ -18,9 +18,16 @@ namespace LDInfo.Api.Features.Users
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] DateTime? fromDate, 
+            [FromQuery] DateTime? toDate,
+            [FromQuery] string? sortBy,
+            [FromQuery] bool? isAscending,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 1000)
         {
-            var models = await this.userService.AllAsync();
+            var models = await this.userService
+                .AllAsync(fromDate, toDate, sortBy, isAscending ?? true, pageNumber, pageSize);
 
             var modelsDtos = mapper.Map<List<UserDto>>(models);
 
