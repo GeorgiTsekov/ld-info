@@ -87,10 +87,10 @@ namespace LDInfo.Api.Features.Seeder
                 // get random from array of domains and create email = firstName.lastName@domain
                 var emailRng = $"{firstNameRng}.{lastNameRng}@{StaticConstants.DOMAINS[Random.Shared.Next(StaticConstants.DOMAINS.Length)]}";
 
-                var user = await userService.ByEmailAsync(emailRng);
+                var currentUser = await userService.ByEmailAsync(emailRng);
 
                 // if user not exists create new one 
-                if (user == null)
+                if (currentUser == null)
                 {
                     var userDto = new UserDto
                     {
@@ -99,12 +99,16 @@ namespace LDInfo.Api.Features.Seeder
                         Email = emailRng
                     };
 
-                    user = mapper.Map<User>(userDto);
+                    var user = mapper.Map<User>(userDto);
 
                     await userService.CreateAsync(user);
-                }
 
-                await SeedTimeLogs(user);
+                    await SeedTimeLogs(user.Id);
+                }
+                else
+                {
+                    await SeedTimeLogs(currentUser.Id);
+                }
             }
         }
 
@@ -112,7 +116,7 @@ namespace LDInfo.Api.Features.Seeder
         /// Create new seeds between 1 and 20 for current user with random date
         /// If the current user has worked more than 7.75 hours, we don't add any more hours for that day and just move on to the next timeLog
         /// </summary>
-        private async Task SeedTimeLogs(User user)
+        private async Task SeedTimeLogs(Guid userId)
         {
             // get random between 1 and 20
             var timeLogsCountRnd = Random.Shared.Next(StaticConstants.TIME_LOGS_MIN_COUNT, StaticConstants.TIME_LOGS_MAX_COUNT);
@@ -130,6 +134,7 @@ namespace LDInfo.Api.Features.Seeder
                 var date = DateTime.Today.AddDays(dayRnd).Date;
 
                 // get sum of all worked hours for current user for current date
+                var user = await this.userService.ByIdAsync(userId);
                 var hoursWorked = user.TimeLogs.Where(x => x.Date == date).Sum(x => x.Hours);
 
                 // if hoursWorked is bigger then 7.75 current user cannot works more current day
@@ -150,7 +155,7 @@ namespace LDInfo.Api.Features.Seeder
                 var timeLogDto = new TimeLogDto
                 {
                     Date = date,
-                    UserId = user.Id,
+                    UserId = userId,
                     ProjectId = project.Id,
                     Hours = hours
                 };
