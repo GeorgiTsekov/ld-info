@@ -18,6 +18,7 @@ namespace LDInfo.Api.Features.Users
         }
 
         [HttpGet]
+        [Route(nameof(GetAll))]
         public async Task<IActionResult> GetAll(
             [FromQuery] DateTime? fromDate, 
             [FromQuery] DateTime? toDate,
@@ -28,6 +29,21 @@ namespace LDInfo.Api.Features.Users
         {
             var models = await this.userService
                 .AllAsync(fromDate, toDate, sortBy, isAscending ?? true, pageNumber, pageSize);
+
+            var modelsDtos = mapper.Map<List<UserDto>>(models);
+
+            return Ok(modelsDtos);
+        }
+
+        [HttpGet]
+        [Route(nameof(GetTop10))]
+        public async Task<IActionResult> GetTop10(
+            [FromQuery] DateTime? fromDate,
+            [FromQuery] DateTime? toDate,
+            [FromQuery] string? sortBy,
+            [FromQuery] bool? isAscending)
+        {
+            var models = await this.userService.Top10Async(fromDate, toDate, sortBy, isAscending ?? true);
 
             var modelsDtos = mapper.Map<List<UserDto>>(models);
 

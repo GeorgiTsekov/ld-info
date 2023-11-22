@@ -13,6 +13,12 @@ namespace LDInfo.Api.Features.Users
             this.dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Get all users.
+        /// Client has a possibility to filter them by date to date sorted by date ascending
+        /// Sort them by email, firstName or lastName
+        /// Pagination functionality
+        /// </summary>
         public async Task<ICollection<User>> AllAsync(
             DateTime? fromDate = null,
             DateTime? toDate = null,
@@ -37,6 +43,20 @@ namespace LDInfo.Api.Features.Users
             var skipResults = (pageNumber - 1) * pageSize;
 
             return await entities.Skip(skipResults).Take(pageSize).ToListAsync();
+        }
+
+        /// <summary>
+        /// Get first 10 users with the most working hours with same filters and sortings as AllAsync
+        /// </summary>
+        public async Task<ICollection<User>> Top10Async(
+            DateTime? fromDate = null,
+            DateTime? toDate = null,
+            string? sortBy = null,
+            bool isAscending = true)
+        {
+            var entities = await this.AllAsync(fromDate, toDate, sortBy, isAscending);
+
+            return entities.OrderByDescending(x => x.TimeLogs.Where(y => y.UserId == x.Id).Sum(x => x.Hours)).Take(10).ToList();
         }
 
         public async Task<User> ByIdAsync(Guid Id)
