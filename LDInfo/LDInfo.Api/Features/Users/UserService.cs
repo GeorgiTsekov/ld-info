@@ -1,4 +1,5 @@
-﻿using LDInfo.Data;
+﻿using LDInfo.Api.Features.Users.Models;
+using LDInfo.Data;
 using LDInfo.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,13 +51,11 @@ namespace LDInfo.Api.Features.Users
         /// </summary>
         public async Task<ICollection<User>> Top10Async(
             DateTime? fromDate = null,
-            DateTime? toDate = null,
-            string? sortBy = null,
-            bool isAscending = true)
+            DateTime? toDate = null)
         {
-            var entities = await this.AllAsync(fromDate, toDate, sortBy, isAscending);
+            var entities = await this.AllAsync(fromDate, toDate);
 
-            return entities.OrderByDescending(x => x.TimeLogs.Where(y => y.UserId == x.Id).Sum(x => x.Hours)).Take(10).ToList();
+            return entities.OrderByDescending(x => x.TimeLogs.Sum(x => x.Hours)).Take(10).ToList();
         }
 
         public async Task<User> ByIdAsync(Guid Id)
@@ -73,12 +72,57 @@ namespace LDInfo.Api.Features.Users
         public async Task<User> ByEmailAsync(string email)
         {
             var entity = await dbContext.Users
-            .AsNoTracking()
-            .Include(u => u.TimeLogs)
-            .ThenInclude(t => t.Project)
-            .SingleOrDefaultAsync(x => x.Email == email);
+                .AsNoTracking()
+                .Include(u => u.TimeLogs)
+                .ThenInclude(t => t.Project)
+                .SingleOrDefaultAsync(x => x.Email == email);
 
             return entity;
+        }
+
+        /// <summary>
+        /// Return Current User with worked hours by email
+        /// </summary>
+        public async Task<TopUserDetails> ByEmailAndDate(
+            string email,
+            DateTime? fromDate = null,
+            DateTime? toDate = null)
+        {
+            var entity = await dbContext.Users
+                .AsNoTracking()
+                .Include(u => u.TimeLogs)
+                .ThenInclude(t => t.Project)
+                .SingleOrDefaultAsync(x => x.Email == email);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            var workedHours = entity.TimeLogs.Sum(x => x.Hours);
+
+            if (fromDate.HasValue && toDate.HasValue)
+            {
+                workedHours = entity.TimeLogs.Where(t => t.Date >= fromDate && t.Date <= toDate).Sum(x => x.Hours);
+            }
+            else if (fromDate.HasValue && !toDate.HasValue)
+            {
+                workedHours = entity.TimeLogs.Where(t => t.Date >= fromDate).Sum(x => x.Hours);
+            }
+            else if (!fromDate.HasValue && toDate.HasValue)
+            {
+                workedHours = entity.TimeLogs.Where(t => t.Date <= toDate).Sum(x => x.Hours);
+            }
+
+            var currentUser = new TopUserDetails
+            {
+                Email = email,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                WorkedHours = workedHours
+            };
+
+            return currentUser;
         }
 
         public async Task CreateAsync(User entity)

@@ -17,6 +17,8 @@ namespace LDInfo.Api.Features
             CreateMap<TimeLogDto, TimeLog>().ReverseMap();
             CreateMap<TimeLog, TimeLogDto>().ReverseMap();
             CreateMap<TimeLog, TimeLogDetails>().ReverseMap();
+            CreateMap<TimeLog, TopUserDetails>().ReverseMap();
+            CreateMap<TopUserDetails, TimeLog>().ReverseMap();
         }
     }
 }
