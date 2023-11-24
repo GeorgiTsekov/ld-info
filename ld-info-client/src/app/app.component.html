@@ -1,7 +1,31 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-12">
-      Here!!!
+    <div class="col-md-6 left-side-home-outer">
+      <p *ngIf="loadedTimelogs.length < 1 && !isFetching">No timelogs available!</p>
+      <ul class="list-group" *ngIf="loadedTimelogs.length >= 1 && !isFetching">
+        <li class="list-group-item" *ngFor="let timelog of loadedTimelogs">
+          <h4 class="list-group-item-heading">Email: {{ timelog.userEmail }}</h4>
+          <p class="list-group-item-text">First name: {{ timelog.userFirstName }}</p>
+          <p class="list-group-item-text">Last name: {{ timelog.userLastName }}</p>
+          <p class="list-group-item-text">Project name: {{ timelog.projectName }}</p>
+          <p class="list-group-item-text">Date: {{ timelog.date.split('T')[0] }}</p>
+          <p class="list-group-item-text">Worked hours: {{ timelog.hours }}</p>
+        </li>
+      </ul>
+      <p *ngIf="isFetching">Loading...</p>
+    </div>
+
+    <div class="col-md-6 left-right-home-outer">
+      <p *ngIf="loadedTopUsers.length < 1 && !isFetching">No users available!</p>
+      <ul class="list-group" *ngIf="loadedTopUsers.length >= 1 && !isFetching">
+        <li class="list-group-item" *ngFor="let user of loadedTopUsers">
+          <h4 class="list-group-item-heading">Email: {{ user.email }}</h4>
+          <p class="list-group-item-text">First name: {{ user.firstName }}</p>
+          <p class="list-group-item-text">Last name: {{ user.lastName }}</p>
+          <p class="list-group-item-text">Worked hours: {{ user.workedHours }}</p>
+        </li>
+      </ul>
+      <p *ngIf="isFetching">Loading...</p>
     </div>
   </div>
 </div>
