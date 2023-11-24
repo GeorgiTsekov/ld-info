@@ -1,8 +1,8 @@
 <div class="container">
   <div class="row">
     <div class="col-md-6 left-side-home-outer">
-      <p *ngIf="loadedTimelogs.length < 1 && !isFetching">No timelogs available!</p>
-      <ul class="list-group" *ngIf="loadedTimelogs.length >= 1 && !isFetching">
+      <p *ngIf="loadedTimelogs.length == 0">No timelogs available!</p>
+      <ul class="list-group" *ngIf="loadedTimelogs.length > 0">
         <li class="list-group-item" *ngFor="let timelog of loadedTimelogs">
           <h4 class="list-group-item-heading">Email: {{ timelog.userEmail }}</h4>
           <p class="list-group-item-text">First name: {{ timelog.userFirstName }}</p>
@@ -16,8 +16,8 @@
     </div>
 
     <div class="col-md-6 left-right-home-outer">
-      <p *ngIf="loadedTopUsers.length < 1 && !isFetching">No users available!</p>
-      <ul class="list-group" *ngIf="loadedTopUsers.length >= 1 && !isFetching">
+      <p *ngIf="loadedTopUsers.length == 0">No users available!</p>
+      <ul class="list-group" *ngIf="loadedTopUsers.length > 0">
         <li class="list-group-item" *ngFor="let user of loadedTopUsers">
           <h4 class="list-group-item-heading">Email: {{ user.email }}</h4>
           <p class="list-group-item-text">First name: {{ user.firstName }}</p>

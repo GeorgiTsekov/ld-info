@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { TimeLog } from './timelogs/timelog.model';
 import { User } from './users/user.model';
+import { TimeLogsService } from './timelogs/timelogs.service';
+import { UsersService } from './users/users.service';
 
 @Component({
   selector: 'app-root',
@@ -14,49 +16,34 @@ export class AppComponent implements OnInit {
   loadedTopUsers: User[] = [];
   isFetching = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private timelogsService: TimeLogsService, private usersService: UsersService) { }
 
   ngOnInit() {
-    this.fetchTimelogs();
-    this.fetchTopUsers();
+    this.timelogsService.fetchTimelogs()
+      .subscribe(timelogs => {
+        this.loadedTimelogs = timelogs;
+      });
+
+    this.usersService.fetchUsers()
+      .subscribe(users => {
+        this.loadedTopUsers = users;
+      });
   }
 
   onFetchTopUsers() {
-    this.fetchTimelogs();
+    this.fetchTopUsers();
   }
 
   private fetchTopUsers() {
-    this.isFetching = true;
-    this.http
-      .get<User[]>('https://localhost:7032/api/Users/GetTop10')
-      .pipe(map(users => {
-        return users.map(user => {
-          return { ...user };
-        })
-      }))
+    this.usersService.fetchUsers()
       .subscribe(users => {
-        this.isFetching = false;
-        console.log(users)
         this.loadedTopUsers = users;
       });
   }
 
   onFetchTimelogs() {
-    this.fetchTimelogs();
-  }
-
-  private fetchTimelogs() {
-    this.isFetching = true;
-    this.http
-      .get<TimeLog[]>('https://localhost:7032/api/TimeLogs/GetAll')
-      .pipe(map(timelogs => {
-        return timelogs.map(timelog => {
-          return { ...timelog };
-        })
-      }))
+    this.timelogsService.fetchTimelogs()
       .subscribe(timelogs => {
-        console.log(timelogs)
-        this.isFetching = false;
         this.loadedTimelogs = timelogs;
       });
   }
