@@ -135,6 +135,12 @@ namespace LDInfo.Api.Features.Seeder
 
                 // get sum of all worked hours for current user for current date
                 var user = await this.userService.ByIdAsync(userId);
+
+                if (user == null || project == null)
+                {
+                    continue;
+                }
+
                 var hoursWorked = user.TimeLogs.Where(x => x.Date == date).Sum(x => x.Hours);
 
                 // if hoursWorked is bigger then 7.75 current user cannot works more current day
