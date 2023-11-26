@@ -24,6 +24,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private userErrorSub: Subscription;
   @ViewChild('fromDateInput') fromDateInput: ElementRef;
   @ViewChild('toDateInput') toDateInput: ElementRef;
+  @ViewChild('sortByInput') sortByInput: ElementRef;
+  @ViewChild('isAscendingInput') isAscendingInput: ElementRef;
+  @ViewChild('pageNumberInput') pageNumberInput: ElementRef;
+  @ViewChild('pageSizeInput') pageSizeInput: ElementRef;
 
   constructor(private http: HttpClient, private timelogsService: TimeLogsService, private usersService: UsersService) { }
 
@@ -146,5 +150,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private resetDateInputs() {
     this.fromDateInput.nativeElement.value = null; 
     this.toDateInput.nativeElement.value = null; 
+    this.isAscendingInput.nativeElement.value = null; 
+    this.sortByInput.nativeElement.value = null; 
+    this.pageNumberInput.nativeElement.value = null; 
+    this.pageSizeInput.nativeElement.value = null; 
+    
   }
 }
