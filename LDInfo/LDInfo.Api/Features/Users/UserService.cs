@@ -119,8 +119,8 @@ namespace LDInfo.Api.Features.Users
                 Email = email,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
-                WorkedHours = workedHours
-            };
+                WorkedHours = (float)Convert.ToDecimal(string.Format("{0:F2}", workedHours))
+        };
 
             return currentUser;
         }
