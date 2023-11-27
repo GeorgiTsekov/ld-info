@@ -5,7 +5,6 @@ import { TimeLogsService } from './timelogs/timelogs.service';
 import { UsersService } from './users/users.service';
 import { Subscription } from 'rxjs';
 import { TimelogParams } from './timelogs/timelog.params';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +19,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isUsersFetching = false;
   timeLogError = null;
   userError = null;
+  chartData: { name: string, value: number }[] = []; 
+
   private timelogErrorSub: Subscription;
   private userErrorSub: Subscription;
   @ViewChild('fromDateInput') fromDateInput: ElementRef;
@@ -29,7 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('pageNumberInput') pageNumberInput: ElementRef;
   @ViewChild('pageSizeInput') pageSizeInput: ElementRef;
 
-  constructor(private http: HttpClient, private timelogsService: TimeLogsService, private usersService: UsersService) { }
+  constructor(private timelogsService: TimeLogsService, private usersService: UsersService) { }
 
   ngOnInit() {
     this.timelogErrorSub = this.timelogsService.error.subscribe(errorMessage => {
@@ -56,6 +57,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.usersService.fetchUsers()
       .subscribe(
         users => {
+          this.chartData = users.map(user => ({
+            name: user.email,
+            value: user.workedHours
+          }));
           this.isUsersFetching = false;
           this.loadedTopUsers = users;
         },
@@ -63,6 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.isUsersFetching = false;
           this.userError = error.message;
         });
+
   }
 
   onRegenerateUsers() {
@@ -70,7 +76,7 @@ export class AppComponent implements OnInit, OnDestroy {
       console.log(response);
 
       this.resetDateInputs();
-      
+
       this.ngOnInit();
     });
   }
@@ -86,6 +92,10 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe(
         users => {
           console.log(users)
+          this.chartData = users.map(user => ({
+            name: user.email,
+            value: user.workedHours
+          }));
           this.loadedTopUsers = users;
         },
         error => {
@@ -116,6 +126,11 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe(
         users => {
           console.log(users)
+          this.chartData = users.map(user => ({
+            name: user.email,
+            value: user.workedHours
+          }));
+          
           this.loadedTopUsers = users;
         },
         error => {
@@ -148,12 +163,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private resetDateInputs() {
-    this.fromDateInput.nativeElement.value = null; 
-    this.toDateInput.nativeElement.value = null; 
-    this.isAscendingInput.nativeElement.value = null; 
-    this.sortByInput.nativeElement.value = null; 
-    this.pageNumberInput.nativeElement.value = null; 
-    this.pageSizeInput.nativeElement.value = null; 
-    
+    this.fromDateInput.nativeElement.value = null;
+    this.toDateInput.nativeElement.value = null;
+    this.isAscendingInput.nativeElement.value = null;
+    this.sortByInput.nativeElement.value = null;
+    this.pageNumberInput.nativeElement.value = null;
+    this.pageSizeInput.nativeElement.value = null;
+
   }
 }
