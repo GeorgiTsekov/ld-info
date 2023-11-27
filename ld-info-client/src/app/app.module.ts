@@ -6,6 +6,7 @@ import { UsersComponent } from './users/users.component';
 import { TimelogsComponent } from './timelogs/timelogs.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -14,9 +15,10 @@ import { FormsModule } from '@angular/forms';
     TimelogsComponent,
   ],
   imports: [
-    BrowserModule, 
+    BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    NgxChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
