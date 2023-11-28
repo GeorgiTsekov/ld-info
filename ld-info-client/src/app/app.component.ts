@@ -5,6 +5,7 @@ import { TimeLogsService } from './timelogs/timelogs.service';
 import { UsersService } from './users/users.service';
 import { Subscription } from 'rxjs';
 import { TimelogParams } from './timelogs/timelog.params';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +18,10 @@ export class AppComponent implements OnInit, OnDestroy {
   loadedTopUsers: User[] = [];
   isTimelogsFetching = false;
   isUsersFetching = false;
+  isComparing = false;
   timeLogError = null;
   userError = null;
+  chartUser: { name: string, value: number };
   chartData: { name: string, value: number }[] = []; 
 
   private timelogErrorSub: Subscription;
@@ -30,7 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('pageNumberInput') pageNumberInput: ElementRef;
   @ViewChild('pageSizeInput') pageSizeInput: ElementRef;
 
-  constructor(private timelogsService: TimeLogsService, private usersService: UsersService) { }
+  constructor(private timelogsService: TimeLogsService, private usersService: UsersService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.timelogErrorSub = this.timelogsService.error.subscribe(errorMessage => {
@@ -78,6 +81,35 @@ export class AppComponent implements OnInit, OnDestroy {
       this.resetDateInputs();
 
       this.ngOnInit();
+    });
+  }
+
+  onCompareUsers(email: string, timelogParams?: TimelogParams) {
+    this.usersService.getUserByEmail(
+      email,
+      timelogParams?.fromDate,
+      timelogParams?.toDate,
+      timelogParams?.sortBy,
+      timelogParams?.isAscending,
+      timelogParams?.pageNumber,
+      timelogParams?.pageSize).subscribe(response => {
+      console.log(response);
+
+       this.chartUser= {
+        name: response.email,
+        value: response.workedHours
+      };
+
+      if (this.chartData.length > 10) {
+        this.chartData.pop();
+        this.loadedTopUsers.pop();
+      }
+      this.isComparing = true;
+      this.chartData = [...this.chartData, this.chartUser];
+
+      this.loadedTopUsers.push(response);
+
+      this.cdr.detectChanges();
     });
   }
 
@@ -169,6 +201,5 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sortByInput.nativeElement.value = null;
     this.pageNumberInput.nativeElement.value = null;
     this.pageSizeInput.nativeElement.value = null;
-
   }
 }

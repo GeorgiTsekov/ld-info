@@ -1,13 +1,10 @@
 <div class="container">
-  <hr />
   <div class="col-xs-12 col-md-6 col-md-offset-3">
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-6 col-md-offset-3">
-      
     </div>
   </div>
-  <hr />
   <div class="row">
     <div class="col-md-6 left-side-home-outer">
       <p *ngIf="loadedTimelogs.length == 0 && !isTimelogsFetching">No timelogs available!</p>
@@ -18,6 +15,7 @@
           <p class="list-group-item-text">Project name: {{ timelog.projectName }}</p>
           <p class="list-group-item-text">Date: {{ timelog.date.split('T')[0] }}</p>
           <p class="list-group-item-text">Worked hours: {{ timelog.hours }}</p>
+          <button class="btn btn-primary" (click)="onCompareUsers(timelog.userEmail, timelogParamsForm.value)">Compare</button>
         </li>
       </ul>
     </div>
@@ -59,6 +57,7 @@
           Search
         </button>
       </form>
+      <p *ngIf="loadedTimelogs.length == 0 && !isUsersFetching">No users available!</p>
       <ngx-charts-bar-vertical
         [view]="[600,400]"
         [results]="chartData"

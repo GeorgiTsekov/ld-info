@@ -47,7 +47,6 @@ export class TimeLogsService {
                 })
             }),
                 catchError(errorRes => {
-                    // Send to analytics server
                     return throwError(errorRes);
                 })
             );

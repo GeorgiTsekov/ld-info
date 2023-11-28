@@ -33,13 +33,35 @@ export class UsersService {
                 })
             }),
                 catchError(errorRes => {
-                    // Send to analytics server
                     return throwError(errorRes);
-                }))
+                }));
     }
 
     resetUsers() {
         return this.http
             .get('https://localhost:7032/api/Seeder/GenerateNewData');
+    }
+
+    getUserByEmail(email: string, fromDate?: string, toDate?: string, sortBy?: string, isAscending?: boolean, pageNumber?: number, pageSize?: number) {
+        let searchParams = new HttpParams().append('email', email);
+
+        if (fromDate != '' && fromDate != undefined) {
+            searchParams = searchParams.append('fromDate', fromDate);
+        }
+        if (toDate != '' && toDate != undefined) {
+            searchParams = searchParams.append('toDate', toDate);
+        }
+
+        return this.http
+            .get<User>(`https://localhost:7032/api/Users/GetByEmail`,
+            {
+                params: searchParams
+            })
+            .pipe(map(user => {
+                return {...user}
+            }),
+            catchError(errorRes => {
+                return throwError(errorRes);
+            }));
     }
 } 
